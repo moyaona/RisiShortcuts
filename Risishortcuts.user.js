@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Risishortcuts
-// @namespace    RisishortcutsJVC
+// @name         Risishortcut
+// @namespace    RisishortcutJVC
 // @version      1.0
 // @description  Raccourci :texte: pour insérer un sticker Risibank.
 // @author       moyaona
@@ -74,7 +74,7 @@
             <div id="rs-menu-overlay">
                 <div id="rs-menu-modal">
                     <button id="rs-close-btn" class="rs-close-btn">&times;</button>
-                    <h3>Configuration RisiShortcuts</h3>
+                    <h3>Configuration RisiShortcut</h3>
                     <div id="rs-notification"></div>
                     <ul id="rs-shortcuts-list"></ul>
                     <button id="rs-add-sticker-btn">AJOUTER UN STICKER</button>
@@ -250,7 +250,7 @@
             const risibankOptionsBtn = document.querySelector('.risibank-open-options');
             if (risibankOptionsBtn && !document.getElementById('rs-open-menu-btn')) {
                 const menuBtn = document.createElement('button');
-                menuBtn.id = 'rs-open-menu-btn'; menuBtn.type = 'button'; menuBtn.title = 'Configurer RisiShortcuts';
+                menuBtn.id = 'rs-open-menu-btn'; menuBtn.type = 'button'; menuBtn.title = 'Configurer RisiShortcut';
                 menuBtn.className = 'buttonsEditor__button';
                 menuBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4.5 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-2zM12 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zM2 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zM1.5 8a.5.5 0 0 1 .5-.5h12a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-12a.5.5 0 0 1-.5-.5v-4z"/></svg>`;
                 menuBtn.onclick = openMenu;
