@@ -232,20 +232,70 @@
             element.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
+        function escapeRegExp(string) {
+
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        }
+
+
+
         function handleTextAreaInput(e) {
+
             const textarea = e.target;
-            const text = textarea.value;
-            const match = text.match(/:([\p{L}0-9_()+-]+):/u);
-            if (match) {
-                const code = match[1];
-                const shortcuts = getShortcuts();
-                if (shortcuts[code]) {
-                    const url = shortcuts[code].fullUrl;
-                    const newText = text.replace(`:${code}:`, url + ' ');
-                    setReactInputValue(textarea, newText);
-                    setTimeout(() => { textarea.selectionStart = textarea.selectionEnd = newText.length; }, 0);
+
+            const originalText = textarea.value;
+
+            const shortcuts = getShortcuts();
+
+            const userCodes = Object.keys(shortcuts);
+
+
+
+            let newText = originalText;
+
+            let replacementMade = false;
+
+
+
+            // On parcourt chaque code enregistré par l'utilisateur
+
+            for (const code of userCodes) {
+
+                const fullPattern = `:${code}:`;
+
+                // On crée une expression régulière pour trouver toutes les occurrences de ce code spécifique
+
+                const regex = new RegExp(escapeRegExp(fullPattern), 'g');
+
+
+
+                if (newText.includes(fullPattern)) {
+
+                    newText = newText.replace(regex, shortcuts[code].fullUrl + ' ');
+
+                    replacementMade = true;
+
                 }
+
             }
+
+
+
+            // On met à jour la zone de texte uniquement si un remplacement a eu lieu
+
+            if (replacementMade) {
+
+                setReactInputValue(textarea, newText);
+
+                setTimeout(() => {
+
+                    textarea.selectionStart = textarea.selectionEnd = newText.length;
+
+                }, 0);
+
+            }
+
         }
 
         const observer = new MutationObserver(() => {
