@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Risishortcuts
 // @namespace    RisishortcutsJVC
-// @version      1.1
+// @version      1.2
 // @description  Raccourci :texte: pour insérer un sticker Risibank.
 // @author       moyaona
 // @match        https://www.jeuxvideo.com/forums/*
