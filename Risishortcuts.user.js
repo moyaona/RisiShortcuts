@@ -1,19 +1,19 @@
 // ==UserScript==
 // @name         Risishortcuts
 // @namespace    RisishortcutsJVC
-// @version      1.1
+// @version      1.2
 // @description  Raccourci :texte: pour insérer un sticker Risibank.
 // @author       moyaona
 // @match        https://www.jeuxvideo.com/forums/*
 // @match        https://www.jeuxvideo.com/recherche/forums/*
 // @match        https://www.jeuxvideo.com/messages-prives/*
 // @match        https://risibank.fr/embed*
-// @downloadURL   https://github.com/moyaona/RisiShortcuts/raw/refs/heads/main/Risishortcuts.user.js
-// @updateURL     https://github.com/moyaona/RisiShortcuts/raw/refs/heads/main/Risishortcuts.user.js
+// @downloadURL  https://github.com/moyaona/RisiShortcuts/raw/refs/heads/main/Risishortcuts.user.js
+// @updateURL    https://github.com/moyaona/RisiShortcuts/raw/refs/heads/main/Risishortcuts.user.js
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_addStyle
-// @icon         https://image.noelshack.com/fichiers/2025/44/7/1762109438-risishortcut-script.png
+// @icon         https://image.noelshack.com/fichiers-xs/2025/44/7/1762109438-risishortcut-script.png
 // ==/UserScript==
 
 (function() {
@@ -23,7 +23,7 @@
 
     if (window.location.hostname === 'www.jeuxvideo.com') {
 
-                const jvcSmileyCodes = new Set([
+        const jvcSmileyCodes = new Set([
             ')', '-)', 'hap', '-)))', 'content', 'oui', 'cool', 'rire', '-D', 'rire2',
             'o))', 'ok', 'sournois', 'gni', 'merci', 'rechercher', 'gne', 'hs', 'cimer',
             'siffle', 'snif', 'snif2', 'ouch', 'ouch2', 'p)', '(', '-(', '-((', 'nonnon',
@@ -250,13 +250,9 @@
 
             const userCodes = Object.keys(shortcuts);
 
-
-
             let newText = originalText;
 
             let replacementMade = false;
-
-
 
             // On parcourt chaque code enregistré par l'utilisateur
 
@@ -268,8 +264,6 @@
 
                 const regex = new RegExp(escapeRegExp(fullPattern), 'g');
 
-
-
                 if (newText.includes(fullPattern)) {
 
                     newText = newText.replace(regex, shortcuts[code].fullUrl + ' ');
@@ -277,7 +271,6 @@
                     replacementMade = true;
 
                 }
-
             }
 
 
@@ -320,38 +313,37 @@
 
     if (window.location.hostname === 'risibank.fr' && window.location.pathname.startsWith('/embed')) {
         GM_addStyle(`
-            .shaking-element { position: relative; }
-            .rs-add-icon {
-                position: absolute; bottom: 2px; right: 2px; width: 22px; height: 22px;
-                background-color: #f04747; color: white; border-radius: 50%;
-                border: 2px solid white; cursor: pointer; z-index: 10;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 22px; font-weight: bold; line-height: 1; padding: 0;
-                padding-bottom: 4px; box-sizing: border-box;
-            }
+             .risibank-tile { position: relative; }
+             .rs-add-icon {
+                 position: absolute; bottom: 2px; right: 2px; width: 16px; height: 16px;
+                 background-color: #f04747; color: white; border-radius: 50%;
+                 border: 1px solid white; cursor: pointer; z-index: 30;
+                 display: flex; align-items: center; justify-content: center;
+                 font-size: 16px; font-weight: bold; line-height: 1; padding: 0;
+                 padding-bottom: 3px; box-sizing: border-box;
+             }
         `);
         let iframeObserver = null;
 
         function addPlusIcons() {
-            document.querySelectorAll('.shaking-element').forEach(container => {
-                if (container.querySelector('.rs-add-icon')) return;
+            document.querySelectorAll('.risibank-tile').forEach(containerImg => {
+                if (containerImg.querySelector('.rs-add-icon')) return;
                 const icon = document.createElement('div');
                 icon.className = 'rs-add-icon'; icon.textContent = '+';
                 icon.onclick = async (e) => {
                     e.preventDefault(); e.stopPropagation();
-                    const thumbUrl = container.querySelector('img').src;
-                    let fullUrl;
-                    const id = thumbUrl.split('/').at(-2); // recup lid de image pour appel api
                     try {
+                        const thumbUrl = containerImg.querySelector('img').src;
+                        const id = thumbUrl.split('/').slice(-2)[0]; 
                         const res = await fetch(`https://risibank.fr/api/v1/medias/${id}`);
-                        const json = await res.json(); // <— important
-                        fullUrl = json.source_url; // on recup l'url noelshack via api car elle n'est plus expose
+                        const json = await res.json(); //
+                        const fullUrl = json.source_url; // ON RECUP L'URL NOELSHACK VIA API
+                        window.parent.postMessage({ type: 'RS_STICKER_SELECTED', payload: { fullUrl, thumbUrl } }, 'https://www.jeuxvideo.com');
                     } catch (err) {
                         console.error('[RisiShortcuts] fetch failed', err);
                     }
-                    window.parent.postMessage({ type: 'RS_STICKER_SELECTED', payload: { fullUrl, thumbUrl } }, 'https://www.jeuxvideo.com');
                 };
-                container.appendChild(icon);
+                containerImg.appendChild(icon);
             });
         }
         function removePlusIcons() { document.querySelectorAll('.rs-add-icon').forEach(icon => icon.remove()); }
